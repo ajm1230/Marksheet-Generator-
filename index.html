@@ -22,9 +22,9 @@
     body { font-family: 'Segoe UI', sans-serif; background-color: #f8f9fa; margin: 0; padding: 20px; text-align: center; }
        button:hover { background-color: #004494; }
     .container { border: 10px solid #e94f4f; border-radius: 10px; padding: 20px; background-color: #fffde7;max-width: 900px;margin: auto; overflow-x: auto; }
-    .institution { color: black; font-weight: bold; padding: 10px; font-size: 50px; margin-bottom: 10px; }
-    .title-bar { background: #e94f4f; color: white; font-weight: bold; padding: 10px; font-size: 22px; margin-bottom: 10px; }
-    .subject-bar { background-color: #2f7048; color: white; padding: 10px; font-size: 18px; margin-bottom: 20px; font-weight: bold;}
+    .institution { color: black; font-weight: bold; padding: 0px; font-size: 50px; margin-bottom: 2px; }
+    .title-bar { background: #e94f4f; color: white; font-weight: bold; padding: 5px; font-size: 22px; margin: 5px 50px ; max-width: 200px;  }
+    .subject-bar { background-color: #2E8B57; color: white;  font-size: 18px; margin-bottom: 7px; font-weight: bold;}
     table { width: 100%; border-collapse: collapse; font-size: 16px; min-width: 300px; }
     th, td { font-weight: bold; border: 2px solid #000; padding: 10px; text-align: center; }
     th { font-weight: bold; background-color: #e67700; color: white; }
@@ -36,8 +36,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-<div class="font-[30px]"> MARKSHEET GENERATOR</div>
-  <div class="max-w-xl mx-auto p-6 bg-gray-50 rounded-xl shadow-md">
+    <div class="text-[30px]"> MARKSHEET GENERATOR</div>
+
+<div class="max-w-xl mx-auto p-6 bg-gray-50 rounded-xl shadow-md">
   <!-- Inputs -->
   <div class="space-y-4">
     <!-- Faculty, Class, Subject, Topic, Total Marks -->
@@ -66,8 +67,10 @@
   </div>
 </div>
   <div id="marksheet" class="container">
-  <div class="text-xl font-bold institution" >EKLAVYA CLASSES</div>
-  <div class="title-bar">MARKSHEET</div>
+  <div class="text-[32px] font-bold institution" onclick="this.contentEditable = true; this.focus();" 
+  onblur="this.contentEditable = false;"
+  class="border p-2" >EKLAVYA CLASSES</div>
+  <div class="title-bar ">MARKSHEET</div>
   <div class="subject-bar" id="subjectDisplay"></div>
   <table>
     <thead><tr><th>S.NO.</th><th>STUDENT NAME</th><th>MARKS</th></tr></thead>
@@ -177,4 +180,4 @@ if (+marks > +total) return alert("Marks obtained cannot exceed total marks.");
   let dragIndex = null;
   render();
 </script></body>
-  </html>
+</html>
