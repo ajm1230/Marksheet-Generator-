@@ -14,6 +14,11 @@
       font-weight: bold;
       cursor: pointer;
     }
+    #facultyDisplay { 
+        margin-top: 15px; }
+    .design { 
+        font-size: 10px;
+    }
     body { font-family: 'Segoe UI', sans-serif; background-color: #f8f9fa; margin: 0; padding: 20px; text-align: center; }
        button:hover { background-color: #004494; }
     .container { border: 10px solid #e94f4f; border-radius: 10px; padding: 20px; background-color: #fffde7;max-width: 900px;margin: auto; overflow-x: auto; }
@@ -31,7 +36,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-  <div class="text-[30px] font-extrabold">MARKSHEET GENERATOR</div>
 <div class="max-w-xl mx-auto p-6 bg-gray-50 rounded-xl shadow-md">
   <!-- Inputs -->
   <div class="space-y-4">
@@ -40,6 +44,7 @@
     <div class="flex items-center gap-4"><label for="class" class="w-36 font-semibold">CLASS:</label><input id="class" placeholder="Class (e.g. 9th)" class="flex-1 p-2 border rounded-md"/></div>
     <div class="flex items-center gap-4"><label for="subject" class="w-36 font-semibold">SUBJECT:</label><input id="subject" placeholder="Subject (e.g. Mathematics)" class="flex-1 p-2 border rounded-md"/></div>
     <div class="flex items-center gap-4"><label for="topic" class="w-36 font-semibold">TOPIC:</label><input id="topic" placeholder="Topic (e.g. Polynomials)" class="flex-1 p-2 border rounded-md"/></div>
+      <hr class="font-5px">
     <div class="flex items-center gap-4"><label for="totalMarks" class="w-36 font-semibold">TOTAL MARKS:</label><input type="number" id="totalMarks" placeholder="Total Marks" class="flex-1 p-2 border rounded-md"/></div>
     <!-- Student Name, Marks, Color -->
     <div class="flex items-center gap-4"><label for="studentName" class="w-36 font-semibold">STUDENT NAME:</label><input id="studentName" placeholder="Student Name" class="flex-1 p-2 border rounded-md"/></div>
@@ -51,7 +56,7 @@
        <button onclick="addStudent()" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow-md transition duration-200">
   Add Student
 </button>
-<button onclick="clearAll" class="bg-red-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow-md transition duration-200">
+<button onclick="clearAll()" class="bg-red-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow-md transition duration-200">
   Clear All
 </button>
 <button onclick="downloadMarksheet()" class="bg-blue-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow-md transition duration-200">
@@ -67,8 +72,13 @@
     <thead><tr><th>S.NO.</th><th>STUDENT NAME</th><th>MARKS</th></tr></thead>
     <tbody id="tableBody"></tbody>
   </table>
-  <div class="footer" id="facultyDisplay"></div>
-</div><script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script><script>
+  <div class="footer font-bold  " id="facultyDisplay"></div>
+      <div class="footer design "   >Designed by Kamil </div>
+</div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    
+    <script>
   let students = JSON.parse(localStorage.getItem('students')) || [];
   let totalMarks = localStorage.getItem('totalMarks') || '';
   // save helpers
@@ -93,10 +103,40 @@
       
       td2.oninput=()=>{ s.name=td2.innerText.trim(); save(); };
       // Marks
-      const td3=document.createElement('td'); td3.contentEditable=true; td3.className='editable marks'; td3.innerText=`${s.marks} / ${totalMarks}`;
-      td3.style.backgroundColor = s.color;
-      td3.oninput=()=>{ let val=td3.innerText.split('/')[0].trim(); if(!isNaN(val)&&+val<=+totalMarks){ s.marks=val; td3.innerText=`${val} / ${totalMarks}`; td3.style.color=s.color; save(); } else { td3.innerText=`${s.marks} / ${totalMarks}`; }};
+     
+const td3 = document.createElement('td');
+td3.className = 'editable marks';
+td3.style.backgroundColor = s.color;
 
+// Create separate span for editable marks
+const marksSpan = document.createElement('span');
+marksSpan.contentEditable = true;
+marksSpan.innerText = s.marks;
+marksSpan.style.color = 'black';
+marksSpan.style.outline = 'none';
+
+// Create a non-editable span for total marks
+const totalSpan = document.createElement('span');
+totalSpan.innerText = ` / ${totalMarks}`;
+totalSpan.style.userSelect = 'none';
+totalSpan.style.pointerEvents = 'none';
+totalSpan.style.marginLeft = '5px';
+
+td3.appendChild(marksSpan);
+td3.appendChild(totalSpan);
+
+// Event to validate marks input
+marksSpan.addEventListener('blur', () => {
+  let val = marksSpan.innerText.trim();
+
+  if (!val || isNaN(val) || +val > +totalMarks) {
+    val = '0'; // Reset to 0 if invalid or exceeds total
+  }
+
+  s.marks = val;
+  marksSpan.innerText = val;
+  save();
+});
       [td1,td2,td3].forEach(el=>row.appendChild(el)); tbody.appendChild(row);
     });
     // header & footer
@@ -112,7 +152,9 @@
     const marks=document.getElementById('studentMarks').value.trim();
     const total=document.getElementById('totalMarks').value.trim();
     const color=document.getElementById('color1').value;
-    if(!name||!marks||isNaN(marks)||+marks>+total) return alert('Enter valid details.');
+    if (!name) return alert("Please enter the student's name.");
+if (!marks || isNaN(marks)) return alert("Please enter a valid number for marks.");
+if (+marks > +total) return alert("Marks obtained cannot exceed total marks.");
     totalMarks=total;
     students.push({name,marks, color});
     saveAndRender();
@@ -134,4 +176,4 @@
   let dragIndex = null;
   render();
 </script></body>
-</html>
+  </html>
