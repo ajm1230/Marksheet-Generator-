@@ -112,6 +112,8 @@ const td3 = document.createElement('td');
 td3.className = 'editable marks';
 td3.style.backgroundColor = s.color;
 
+        
+
 // Create separate span for editable marks
 const marksSpan = document.createElement('span');
 marksSpan.contentEditable = true;
@@ -128,6 +130,22 @@ totalSpan.style.marginLeft = '5px';
 
 td3.appendChild(marksSpan);
 td3.appendChild(totalSpan);
+        
+        
+        // For touch devices (long press)
+td3.addEventListener('touchstart', () => {
+  pressTimer = setTimeout(() => showColorPicker(td3, s), 600); // 600ms long press
+});
+
+td3.addEventListener('touchend', () => clearTimeout(pressTimer));
+td3.addEventListener('touchmove', () => clearTimeout(pressTimer));
+
+// For desktop (right-click)
+td3.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+  showColorPicker(td3, s);
+});
+        
 
 // Event to validate marks input
 marksSpan.addEventListener('blur', () => {
@@ -179,5 +197,29 @@ if (+marks > +total) return alert("Marks obtained cannot exceed total marks.");
 
   let dragIndex = null;
   render();
-</script></body>
+    </script>
+    <script>
+let pressTimer;
+function showColorPicker(targetCell, studentObj) {
+  const picker = document.createElement('input');
+  picker.type = 'color';
+  picker.value = studentObj.color || '#ffffff';
+  picker.style.position = 'absolute';
+  picker.style.left = `${targetCell.getBoundingClientRect().left + window.scrollX}px`;
+  picker.style.top = `${targetCell.getBoundingClientRect().top + window.scrollY}px`;
+  picker.style.zIndex = 1000;
+
+  document.body.appendChild(picker);
+  picker.focus();
+
+  picker.addEventListener('input', () => {
+    studentObj.color = picker.value;
+    targetCell.style.backgroundColor = picker.value;
+    save();
+  });
+
+  picker.addEventListener('blur', () => picker.remove());
+}
+</script>
+</body>
 </html>
